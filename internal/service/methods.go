@@ -37,3 +37,7 @@ func (svc *BookService) GetAll(ctx context.Context) ([]*domain.Book, error) {
 
 	return booksToWeb, err
 }
+
+func (svc *BookService) Delete(ctx context.Context, id uuid.UUID) error {
+	return svc.repo.Delete(ctx, id)
+}
