@@ -1,11 +1,13 @@
 package store
 
 import (
+	"context"
+
 	"github.com/google/uuid"
 	"github.com/mizmorr/ingrytech/internal/store/model"
 )
 
-func (repo *Repo) GetAll() ([]*model.Book, error) {
+func (repo *Repo) GetAll(ctx context.Context) ([]*model.Book, error) {
 	repo.mu.RLock()
 	defer repo.mu.RUnlock()
 
@@ -13,10 +15,10 @@ func (repo *Repo) GetAll() ([]*model.Book, error) {
 		return []*model.Book{}, ErrBooksNotFound
 	}
 
-	return repo.getAll()
+	return repo.getAll(ctx)
 }
 
-func (repo *Repo) getAll() ([]*model.Book, error) {
+func (repo *Repo) getAll(ctx context.Context) ([]*model.Book, error) {
 	values := make([]*model.Book, 0, len(repo.storage))
 
 	for _, value := range repo.storage {
@@ -26,7 +28,7 @@ func (repo *Repo) getAll() ([]*model.Book, error) {
 	return values, nil
 }
 
-func (repo *Repo) Get(id uuid.UUID) (*model.Book, error) {
+func (repo *Repo) Get(ctx context.Context, id uuid.UUID) (*model.Book, error) {
 	repo.mu.RLock()
 	defer repo.mu.RUnlock()
 
@@ -37,7 +39,7 @@ func (repo *Repo) Get(id uuid.UUID) (*model.Book, error) {
 	return val, nil
 }
 
-func (repo *Repo) Delete(id uuid.UUID) error {
+func (repo *Repo) Delete(ctx context.Context, id uuid.UUID) error {
 	repo.mu.Lock()
 	defer repo.mu.Unlock()
 
@@ -48,18 +50,18 @@ func (repo *Repo) Delete(id uuid.UUID) error {
 	return ErrBookNotFound
 }
 
-func (repo *Repo) Update(newBookData *model.Book) error {
+func (repo *Repo) Update(ctx context.Context, newBookData *model.Book) error {
 	repo.mu.Lock()
 	defer repo.mu.Unlock()
 
 	if _, ok := repo.storage[newBookData.ID]; ok {
-		return repo.update(newBookData)
+		return repo.update(ctx, newBookData)
 	}
 
 	return ErrBookNotFound
 }
 
-func (repo *Repo) update(newBookData *model.Book) error {
+func (repo *Repo) update(ctx context.Context, newBookData *model.Book) error {
 	val := repo.storage[newBookData.ID]
 
 	if newBookData.Title != undefinedString {
@@ -76,7 +78,7 @@ func (repo *Repo) update(newBookData *model.Book) error {
 	return nil
 }
 
-func (repo *Repo) Create(book *model.Book) {
+func (repo *Repo) Create(ctx context.Context, book *model.Book) {
 	repo.mu.Lock()
 	defer repo.mu.Unlock()
 
