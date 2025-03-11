@@ -18,3 +18,9 @@ type Repository interface {
 type BookService struct {
 	repo Repository
 }
+
+func NewBookService(repo Repository) *BookService {
+	return &BookService{
+		repo: repo,
+	}
+}
