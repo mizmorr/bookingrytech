@@ -3,6 +3,7 @@ package delivery
 import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	echoSwagger "github.com/swaggo/echo-swagger"
 )
 
 type controller interface {
@@ -15,6 +16,7 @@ type controller interface {
 
 func NewRouter(router *echo.Echo, control controller) {
 	router.Use(middleware.Logger())
+	router.GET("/swagger/*", echoSwagger.WrapHandler)
 	publicRoutes := router.Group("/api/v1")
 
 	{

@@ -27,6 +27,15 @@ func NewBookController(svc Service) *BookController {
 	}
 }
 
+// GetBooks godoc
+// @Summary Получить список книг
+// @Description Возвращает список всех книг
+// @Tags books
+// @Accept json
+// @Produce json
+// @Success 200 {array} domain.Book
+// @Failure 400 {object} map[string]string
+// @Router /books [get]
 func (bc *BookController) GetBooks(c echo.Context) error {
 	books, err := bc.svc.GetAll(c.Request().Context())
 	if err != nil {
@@ -36,6 +45,17 @@ func (bc *BookController) GetBooks(c echo.Context) error {
 	return c.JSON(http.StatusOK, books)
 }
 
+// GetBook godoc
+// @Summary Получить книгу по ID
+// @Description Возвращает информацию о книге по её идентификатору
+// @Tags books
+// @Accept json
+// @Produce json
+// @Param id path string true "ID книги"
+// @Success 200 {object} domain.Book
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /books/{id} [get]
 func (bs *BookController) GetBook(c echo.Context) error {
 	rawID := c.Param("id")
 
@@ -52,6 +72,17 @@ func (bs *BookController) GetBook(c echo.Context) error {
 	return c.JSON(http.StatusOK, book)
 }
 
+// Update godoc
+// @Summary Обновить информацию о книге
+// @Description Обновляет данные книги по предоставленной информации
+// @Tags books
+// @Accept json
+// @Produce json
+// @Param data body domain.Book true "Данные для обновления книги"
+// @Success 200 {object} map[string]string
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /books/update [post]
 func (bs *BookController) Update(c echo.Context) error {
 	var (
 		bookUpdateReq domain.Book
@@ -71,6 +102,16 @@ func (bs *BookController) Update(c echo.Context) error {
 	return c.JSON(http.StatusOK, map[string]string{"status": "updated succesfully"})
 }
 
+// Create godoc
+// @Summary Создать новую книгу
+// @Description Создает новую книгу с переданными данными
+// @Tags books
+// @Accept json
+// @Produce json
+// @Param data body domain.Book true "Данные для создания книги"
+// @Success 200 {object} map[string]string
+// @Failure 400 {object} map[string]string
+// @Router /books/create [post]
 func (bs *BookController) Create(c echo.Context) error {
 	var (
 		bookCreateReq domain.Book
@@ -87,6 +128,17 @@ func (bs *BookController) Create(c echo.Context) error {
 	return c.JSON(http.StatusOK, map[string]string{"status": "created succesfully"})
 }
 
+// Delete godoc
+// @Summary Удалить книгу
+// @Description Удаляет книгу по её идентификатору
+// @Tags books
+// @Accept json
+// @Produce json
+// @Param id path string true "ID книги"
+// @Success 200 {object} map[string]string
+// @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
+// @Router /books/{id} [delete]
 func (bs *BookController) Delete(c echo.Context) error {
 	rawID := c.Param("id")
 
