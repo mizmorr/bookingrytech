@@ -2,7 +2,7 @@ package lifecycle
 
 import "context"
 
-type Cycle interface {
+type Lifecycle interface {
 	Start(context.Context) error
 	Stop(context.Context) error
 }
