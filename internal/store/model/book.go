@@ -6,5 +6,5 @@ type Book struct {
 	ID              uuid.UUID
 	Title           string
 	Author          string
-	PublicationYear int8
+	PublicationYear uint16
 }
