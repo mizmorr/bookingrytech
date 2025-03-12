@@ -14,6 +14,8 @@ type Config struct {
 	Listen
 
 	Logger
+
+	Postgres
 }
 
 type Listen struct {
@@ -30,6 +32,15 @@ var (
 type Logger struct {
 	Level    string
 	PathFile string
+}
+
+type Postgres struct {
+	URL               string
+	Timeout           time.Duration
+	ConnectAttempts   int
+	MaxIdleTime       time.Duration
+	MaxOpenConns      int
+	HealthCheckPeriod time.Duration
 }
 
 func Get() *Config {
@@ -55,8 +66,6 @@ func setDefaults() {
 			viper.SetDefault(o.name, o.value.(string))
 		case "int":
 			viper.SetDefault(o.name, o.value.(int))
-		case "slice":
-			viper.SetDefault(o.name, o.value.([]string))
 		default:
 			viper.SetDefault(o.name, o.value)
 		}

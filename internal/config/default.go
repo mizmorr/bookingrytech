@@ -38,6 +38,42 @@ var defaults = []option{
 		value:       "5s",
 		description: "Timeout for worker keep-alive",
 	},
+	{
+		name:        "postgres.URL",
+		typing:      "string",
+		value:       "postgres://postgres:post@localhost:5432/books?sslmode=disable",
+		description: "Postgres database URL",
+	},
+	{
+		name:        "postgres.Timeout",
+		typing:      "duration",
+		value:       "2s",
+		description: "Timeout for database connection",
+	},
+	{
+		name:        "postgres.ConnectAttempts",
+		typing:      "int",
+		value:       10,
+		description: "Number of database connection attempts",
+	},
+	{
+		name:        "postgres.MaxIdleTime",
+		typing:      "duration",
+		value:       "5m",
+		description: "Maximum idle time for database connections",
+	},
+	{
+		name:        "postgres.MaxOpenConns",
+		typing:      "int",
+		value:       100,
+		description: "Maximum number of open database connections",
+	},
+	{
+		name:        "postgres.HealthCheckPeriod",
+		typing:      "duration",
+		value:       "5m",
+		description: "Period for database health check",
+	},
 }
 
 type option struct {
