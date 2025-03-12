@@ -30,7 +30,7 @@ func NewBookController(svc Service) *BookController {
 func (bc *BookController) GetBooks(c echo.Context) error {
 	books, err := bc.svc.GetAll(c.Request().Context())
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, err)
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": err.Error()})
 	}
 
 	return c.JSON(http.StatusOK, books)
@@ -41,12 +41,12 @@ func (bs *BookController) GetBook(c echo.Context) error {
 
 	bookID, err := uuid.Parse(rawID)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]error{"error": ErrInvalidUUID})
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": ErrInvalidUUID.Error()})
 	}
 
 	book, err := bs.svc.Get(c.Request().Context(), bookID)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]error{"error": ErrInternal})
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": ErrInternal.Error()})
 	}
 
 	return c.JSON(http.StatusOK, book)
@@ -54,18 +54,18 @@ func (bs *BookController) GetBook(c echo.Context) error {
 
 func (bs *BookController) Update(c echo.Context) error {
 	var (
-		bookUpdateReq *domain.Book
+		bookUpdateReq domain.Book
 		err           error
 	)
 
-	err = c.Bind(bookUpdateReq)
+	err = c.Bind(&bookUpdateReq)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]error{"error": ErrBadRequestBody})
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": ErrBadRequestBody.Error()})
 	}
 
-	err = bs.svc.Update(c.Request().Context(), bookUpdateReq)
+	err = bs.svc.Update(c.Request().Context(), &bookUpdateReq)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]error{"error": ErrInternal})
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": ErrInternal.Error()})
 	}
 
 	return c.JSON(http.StatusOK, map[string]string{"status": "updated succesfully"})
@@ -73,16 +73,16 @@ func (bs *BookController) Update(c echo.Context) error {
 
 func (bs *BookController) Create(c echo.Context) error {
 	var (
-		bookCreateReq *domain.Book
+		bookCreateReq domain.Book
 		err           error
 	)
 
-	err = c.Bind(bookCreateReq)
+	err = c.Bind(&bookCreateReq)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]error{"error": ErrBadRequestBody})
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": ErrBadRequestBody.Error()})
 	}
 
-	bs.svc.Create(c.Request().Context(), bookCreateReq)
+	bs.svc.Create(c.Request().Context(), &bookCreateReq)
 
 	return c.JSON(http.StatusOK, map[string]string{"status": "created succesfully"})
 }
@@ -92,12 +92,12 @@ func (bs *BookController) Delete(c echo.Context) error {
 
 	bookID, err := uuid.Parse(rawID)
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, map[string]error{"error": ErrInvalidUUID})
+		return c.JSON(http.StatusBadRequest, map[string]string{"error": ErrInvalidUUID.Error()})
 	}
 
 	err = bs.svc.Delete(c.Request().Context(), bookID)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, map[string]error{"error": err})
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": err.Error()})
 	}
 	return c.JSON(http.StatusOK, map[string]string{"status": "deleted succesfully"})
 }
