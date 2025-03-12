@@ -159,6 +159,53 @@ func TestDeleteBook(t *testing.T) {
 		t.Fatalf("Error when calling endpoint: %v", err)
 	}
 
-	// Проверяем успешный ответ
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
+}
+
+func TestGetBookInvalidUUID(t *testing.T) {
+	invalidID := "invalid-uuid"
+	req, err := http.NewRequest("GET", apiBaseURL+"/"+invalidID, nil)
+	if err != nil {
+		t.Fatalf("Error creating request: %v", err)
+	}
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		t.Fatalf("Error when calling endpoint: %v", err)
+	}
+
+	assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
+}
+
+func TestCreateBookError(t *testing.T) {
+	req, err := http.NewRequest("POST", apiBaseURL+"/create", nil)
+	if err != nil {
+		t.Fatalf("Error creating request: %v", err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		t.Fatalf("Error when calling endpoint: %v", err)
+	}
+
+	assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
+}
+
+func TestUpdateBookError(t *testing.T) {
+	req, err := http.NewRequest("POST", apiBaseURL+"/update", nil)
+	if err != nil {
+		t.Fatalf("Error creating request: %v", err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		t.Fatalf("Error when calling endpoint: %v", err)
+	}
+
+	assert.Equal(t, http.StatusBadRequest, resp.StatusCode)
 }
