@@ -7,7 +7,7 @@ import (
 	"github.com/mizmorr/ingrytech/internal/config"
 	"github.com/mizmorr/ingrytech/internal/delivery"
 	"github.com/mizmorr/ingrytech/internal/service"
-	"github.com/mizmorr/ingrytech/internal/store"
+	"github.com/mizmorr/ingrytech/internal/store/postgres"
 	"github.com/mizmorr/ingrytech/pkg/lifecycle"
 	"github.com/mizmorr/ingrytech/pkg/server"
 	logger "github.com/mizmorr/loggerm"
@@ -92,7 +92,10 @@ func (a *App) Stop(ctx context.Context) error {
 }
 
 func (a *App) setUp(ctx context.Context) error {
-	repo := store.NewInMemoryRepo()
+	repo, err := postgres.NewPostgresRepo(ctx)
+	if err != nil {
+		return err
+	}
 
 	service := service.NewBookService(repo)
 
@@ -104,7 +107,10 @@ func (a *App) setUp(ctx context.Context) error {
 
 	httpServer := server.New(handler, a.config.HttpHost, a.config.HttpPort, a.config.ShutdownTimeout)
 
-	a.comps = append(a.comps, component{Name: "server", ServiceTask: httpServer})
+	a.comps = append(a.comps,
+		component{Name: "server", ServiceTask: httpServer},
+		component{Name: "postgres", ServiceTask: repo},
+	)
 
 	return nil
 }
