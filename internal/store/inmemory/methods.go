@@ -1,9 +1,10 @@
-package store
+package inmemory
 
 import (
 	"context"
 
 	"github.com/google/uuid"
+	"github.com/mizmorr/ingrytech/internal/store"
 	"github.com/mizmorr/ingrytech/internal/store/model"
 )
 
@@ -12,7 +13,7 @@ func (repo *Repo) GetAll(ctx context.Context) ([]*model.Book, error) {
 	defer repo.mu.RUnlock()
 
 	if len(repo.storage) == 0 {
-		return []*model.Book{}, ErrBooksNotFound
+		return []*model.Book{}, store.ErrBooksNotFound
 	}
 
 	return repo.getAll(ctx)
@@ -34,7 +35,7 @@ func (repo *Repo) Get(ctx context.Context, id uuid.UUID) (*model.Book, error) {
 
 	val, ok := repo.storage[id]
 	if !ok {
-		return nil, ErrBookNotFound
+		return nil, store.ErrBookNotFound
 	}
 	return val, nil
 }
@@ -47,7 +48,7 @@ func (repo *Repo) Delete(ctx context.Context, id uuid.UUID) error {
 		delete(repo.storage, id)
 		return nil
 	}
-	return ErrBookNotFound
+	return store.ErrBookNotFound
 }
 
 func (repo *Repo) Update(ctx context.Context, newBookData *model.Book) error {
@@ -58,7 +59,7 @@ func (repo *Repo) Update(ctx context.Context, newBookData *model.Book) error {
 		return repo.update(ctx, newBookData)
 	}
 
-	return ErrBookNotFound
+	return store.ErrBookNotFound
 }
 
 func (repo *Repo) update(ctx context.Context, newBookData *model.Book) error {
@@ -78,9 +79,10 @@ func (repo *Repo) update(ctx context.Context, newBookData *model.Book) error {
 	return nil
 }
 
-func (repo *Repo) Create(ctx context.Context, book *model.Book) {
+func (repo *Repo) Create(ctx context.Context, book *model.Book) error {
 	repo.mu.Lock()
 	defer repo.mu.Unlock()
 
 	repo.storage[book.ID] = book
+	return nil
 }
