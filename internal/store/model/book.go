@@ -8,3 +8,7 @@ type Book struct {
 	Author          string
 	PublicationYear uint16
 }
+
+func (Book) TableName() string {
+	return "books"
+}
