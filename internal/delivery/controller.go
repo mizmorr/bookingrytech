@@ -11,7 +11,7 @@ import (
 
 type Service interface {
 	Get(ctx context.Context, id uuid.UUID) (*domain.Book, error)
-	Create(ctx context.Context, book *domain.Book)
+	Create(ctx context.Context, book *domain.Book) error
 	Update(ctx context.Context, book *domain.Book) error
 	GetAll(ctx context.Context) ([]*domain.Book, error)
 	Delete(ctx context.Context, id uuid.UUID) error
@@ -94,6 +94,10 @@ func (bs *BookController) Update(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": ErrBadRequestBody.Error()})
 	}
 
+	if err = c.Validate(&bookUpdateReq); err != nil {
+		return err
+	}
+
 	err = bs.svc.Update(c.Request().Context(), &bookUpdateReq)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, map[string]string{"error": ErrInternal.Error()})
@@ -111,6 +115,7 @@ func (bs *BookController) Update(c echo.Context) error {
 // @Param data body domain.Book true "Данные для создания книги"
 // @Success 200 {object} map[string]string
 // @Failure 400 {object} map[string]string
+// @Failure 500 {object} map[string]string
 // @Router /books/create [post]
 func (bs *BookController) Create(c echo.Context) error {
 	var (
@@ -123,7 +128,13 @@ func (bs *BookController) Create(c echo.Context) error {
 		return c.JSON(http.StatusBadRequest, map[string]string{"error": ErrBadRequestBody.Error()})
 	}
 
-	bs.svc.Create(c.Request().Context(), &bookCreateReq)
+	if err = c.Validate(&bookCreateReq); err != nil {
+		return err
+	}
+
+	if err = bs.svc.Create(c.Request().Context(), &bookCreateReq); err != nil {
+		return c.JSON(http.StatusInternalServerError, map[string]string{"error": ErrInternal.Error()})
+	}
 
 	return c.JSON(http.StatusOK, map[string]string{"status": "created succesfully"})
 }
