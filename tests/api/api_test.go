@@ -3,7 +3,6 @@ package api
 import (
 	"bytes"
 	"encoding/json"
-	"log"
 	"net/http"
 	"testing"
 
@@ -13,7 +12,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-const apiBaseURL = "http://localhost:8080/api/v1"
+const apiBaseURL = "http://localhost:8080/api/v1/books"
 
 var curID = uuid.New()
 
@@ -136,7 +135,6 @@ func TestUpdateBook(t *testing.T) {
 
 	var updated model.Book
 
-	log.Println(resp.Body)
 	err = json.NewDecoder(resp.Body).Decode(&updated)
 	if err != nil {
 		t.Fatalf("Error decoding response: %v", err)
