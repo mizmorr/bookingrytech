@@ -16,6 +16,8 @@ type Config struct {
 	Logger
 
 	Postgres
+
+	Worker
 }
 
 type Listen struct {
@@ -41,6 +43,10 @@ type Postgres struct {
 	MaxIdleTime       time.Duration
 	MaxOpenConns      int
 	HealthCheckPeriod time.Duration
+}
+
+type Worker struct {
+	KeepAliveTimeout time.Duration
 }
 
 func Get() *Config {
