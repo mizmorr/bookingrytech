@@ -16,10 +16,10 @@ func (svc *BookService) Get(ctx context.Context, id uuid.UUID) (*domain.Book, er
 	return mappers.BookToWeb(bookDB), nil
 }
 
-func (svc *BookService) Create(ctx context.Context, book *domain.Book) {
+func (svc *BookService) Create(ctx context.Context, book *domain.Book) error {
 	bookDB := mappers.BookToDB(book)
 
-	svc.repo.Create(ctx, bookDB)
+	return svc.repo.Create(ctx, bookDB)
 }
 
 func (svc *BookService) Update(ctx context.Context, book *domain.Book) error {

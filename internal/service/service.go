@@ -12,7 +12,7 @@ type Repository interface {
 	Get(ctx context.Context, id uuid.UUID) (*model.Book, error)
 	Delete(ctx context.Context, id uuid.UUID) error
 	Update(ctx context.Context, newBookData *model.Book) error
-	Create(ctx context.Context, book *model.Book)
+	Create(ctx context.Context, book *model.Book) error
 }
 
 type BookService struct {
